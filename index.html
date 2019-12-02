@@ -1,0 +1,84 @@
+<html>
+<head>
+   <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
+   <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.ie.css" />
+   <script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
+   <!-- Leaflet Plugins -->		
+
+   <script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
+
+   <script src="L.GeoSearch/src/js/l.control.geosearch.js"></script>
+   <script src="L.GeoSearch/src/js/l.geosearch.provider.esri.js"></script>
+   <link rel="stylesheet" href="L.GeoSearch/src/css/l.geosearch.css" />
+         <!-- Leaflet Plugins -->
+   <link rel="stylesheet" src="Leaflet-MiniMap/src/Control.MiniMap.css" />
+   <script src="Leaflet-MiniMap/src/Control.MiniMap.js" type="text/javascript"></script>
+
+   <link rel="stylesheet" src="Leaflet.Mouseposition/src/L.Control.MousePosition.css" />
+   <script src="Leaflet.Mouseposition/src/L.Control.MousePosition.js" type="text/javascript"></script>
+
+    <link rel="stylesheet" href="leaflet.measure/leaflet.measure.css"/>
+    <script src="leaflet.measure/leaflet.measure.js"></script>
+</head>	
+<body>	
+   <div style="width:100%; height:100%" id="map"></div>
+   <script>
+
+      var nacimiento = L.marker([39.478062, -0.364062]).bindPopup('Donde Naci, Nacimiento.'),
+      upm    = L.marker([40.40552, -3.83932]).bindPopup('Escuela Técnica Superior de Ingenieros Informáticos de la Universidad Politécnica de Madrid, UPM.');
+      
+
+      var cities = L.layerGroup([nacimiento, upm]);
+      //var map = L.map('map',{crs: L.CRS.EPSG4326}).setView([40, -2.5], 7);
+      var osmTileUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      var basemap = new L.TileLayer(osmTileUrl, {maxZoom: 18});
+      var map = new L.Map('map', {
+         layers: [basemap,cities],
+         center: new L.LatLng(40.40552, -3.83932), zoom: 18
+      });
+  //Minimap
+	  var osm2 = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {minZoom: 0, maxZoom: 13});
+	  var miniMap = new L.Control.MiniMap(osm2,{ toggleDisplay: true }).addTo(map);
+	  //MousePosition
+	  var mousePosition = new L.Control.MousePosition().addTo(map);	
+	  //Búsqueda	 
+     new L.Control.GeoSearch({provider: new L.GeoSearch.Provider.Esri()}).addTo(map);
+      
+   var capa1 = L.tileLayer.wms("http://vmap0.tiles.osgeo.org/wms/vmap0",{layers: 'basic', format: 'image/jpeg', transparent: true, attribution:"OsGEO"});
+      capa1.addTo(map);	
+     var capa2=L.tileLayer.wms("http://www.ign.es/wms-inspire/pnoa-ma",{layers:'OI.OrthoimageCoverage', format: 'image/jpeg',transparent: true, attribution: "PNOA"});
+	  var capa3 = L.tileLayer.wms("http://servicios.idee.es/wms-inspire/transportes", {layers: 
+      'TN.RoadTransportNetwork.RoadLink',format:'image/png', transparent: 
+      true,attribution: "Carreteras"});
+
+	  var overlays = {"Carreteras": capa3};			
+	  var baseLayers = {"OSGEO": capa1,"PNOA": capa2};
+	  L.control.layers(baseLayers,overlays).addTo(map);
+
+     L.marker([40.40552, -3.83932]).addTo(map).bindPopup('Escuela Técnica Superior de Ingenieros Informáticos de la Universidad Politécnica de Madrid. <a href="https://www.fi.upm.es">UPM</a>').openPopup();
+
+           var plugin = L.control.measure({
+        //  control position
+        position: 'topleft',
+        //  weather to use keyboard control for this plugin
+        keyboard: true,
+        //  shortcut to activate measure
+        activeKeyCode: 'M'.charCodeAt(0),
+        //  shortcut to cancel measure, defaults to 'Esc'
+        cancelKeyCode: 27,
+        //  line color
+        lineColor: 'red',
+        //  line weight
+        lineWeight: 2,
+        //  line dash
+        lineDashArray: '6, 6',
+        //  line opacity
+        lineOpacity: 1,
+        //  distance formatter
+        // formatDistance: function (val) {
+        //   return Math.round(1000 * val / 1609.344) / 1000 + 'mile';
+        // }
+      }).addTo(map)
+   </script>
+</body> 
+</html>
